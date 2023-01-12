@@ -338,6 +338,12 @@ def preprocess_ep(data : pd.DataFrame, seasons = [], verbose : bool = True):
     # delete invalid vals
     data = data[data['next_score'] != 'opp_pat'] # -1 or opponent pat should not be possible and is a result of faulty data
     
+    # map next score type to next score value
+    # td quarantees an extra point attempt, therefore should the value of a td be higher...?
+    data['next_score_value'] = data['next_score'].map({'td': 6, 'fg': 3, 'safety': 2, '2pat': 2, 'pat': 1,
+                                                       'opp_td': -6, 'opp_fg': -3, 'opp_safety': -2, 'opp_patreturn': -2,
+                                                       'no_score': 0})
+    
     if verbose: print(f'Final dataset size is {len(data)} rows')
     
     # ========================= Feature selection and engineering =========================
@@ -345,8 +351,13 @@ def preprocess_ep(data : pd.DataFrame, seasons = [], verbose : bool = True):
     
     # ========================= Separate field goal and extra (& 2) point attempts =========================
     
-    data_fg = data.query()
-    data_pat = data.query('(extra_point_attempt == 1 or two_point_attempt == 1) or (next_score == "pat" or next_score == "2pat" or next_score == "opp_patreturn")')
-    data_normal = data - data_fg - data_pat
+    #data_fg = data.query()
+    # should cover all possible extra-point-related plays
+    #data_pat = data.query('(extra_point_attempt == 1 or two_point_attempt == 1) or (next_score == "pat" or next_score == "2pat" or next_score == "opp_patreturn")')
     
-    return data_normal, data_fg, data_pat
+    # remove fg and pat rows from main set
+    #data_normal = pd.concat([data, data_fg]).drop_duplicates(keep=False)
+    #data_normal = pd.concat([data_normal, data_pat]).drop_duplicates(keep=False)
+    
+    #return data_normal, data_fg, data_pat
+    return data
