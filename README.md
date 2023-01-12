@@ -1,3 +1,1 @@
-# NFLModels
-
-lorem ipsum.
+# nflmodels
