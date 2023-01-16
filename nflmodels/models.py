@@ -22,12 +22,23 @@ class NFLModel():
         self.validate(X_val, y_val)
         
     
-    
-    
 class NextPlayModel(NFLModel):
         
-    def __fit(self, X_train : pd.DataFrame, y_train : pd.DataFrame):
-        return
+    def __init__(self):
+        self.classifier = xgb.XGBClassifier(n_jobs=-1, n_estimators=100, learning_rate=0.1, eval_metric='mlogloss', min_child_weight=2)
+        
+    def validate(self, X_val: pd.DataFrame, y_val: pd.DataFrame):
+        y_pred, y_pred_proba = super().validate(X_val, y_val)
+        
+        print('On validation set')
+        print('ROC AUC: {:.3f}\nF1 score: {:.3f}\nMSE: {:.3f}\nLog loss: {:.3f}'.format(
+            roc_auc_score(pd.get_dummies(y_val, columns=y_val.columns.values), y_pred_proba, average='weighted', multi_class='ovo'), 
+            f1_score(y_val, y_pred, average='weighted'),
+            mean_squared_error(y_val, y_pred), 
+            log_loss(y_val, y_pred_proba))
+        )
+        
+        return y_pred, y_pred_proba
 
 
 class FieldGoalModel(NFLModel):
@@ -48,6 +59,19 @@ class FieldGoalModel(NFLModel):
 
 class EPModel(NFLModel):
         
-    def __fit(self, X_train : pd.DataFrame, y_train : pd.DataFrame):
-        return
+    def __init__(self):
+        self.classifier = LogisticRegression(max_iter=10000, n_jobs=-1)
+        
+    def validate(self, X_val: pd.DataFrame, y_val: pd.DataFrame):
+        y_pred, y_pred_proba = super().validate(X_val, y_val)
+        
+        print('On validation set')
+        print('ROC AUC: {:.3f}\nF1 score: {:.3f}\nMSE: {:.3f}\nLog loss: {:.3f}'.format(
+            roc_auc_score(pd.get_dummies(y_val, columns=y_val.columns.values), y_pred_proba, average='weighted', multi_class='ovo'), 
+            f1_score(y_val, y_pred, average='weighted'),
+            mean_squared_error(y_val, y_pred), 
+            log_loss(y_val, y_pred_proba))
+        )
+        
+        return y_pred, y_pred_proba
     

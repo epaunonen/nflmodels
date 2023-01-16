@@ -189,7 +189,7 @@ def preprocess_next_play(data : pd.DataFrame, seasons = [],
     # ===== Encode categoricals =====
     data = pd.get_dummies(data=data, columns=categoricals)
     
-    
+    # Transforms play type to integers, required for some models e.g. xgboost
     if map_target_to_int:
         if verbose: print('Encoding play types as integers...')
         map_dict = {}
@@ -359,11 +359,11 @@ def preprocess_ep(data : pd.DataFrame, seasons = [], verbose : bool = True):
     
     # ========================= Feature selection and engineering =========================
     
-    data_normal_y = data_normal[target]
+    data_normal_y = data_normal[target[0]]
     data_normal_X = data_normal[continuous+categoricals]
     data_normal_X = pd.get_dummies(data=data_normal_X, columns=categoricals)
     
-    data_pat_y = data_pat[target]
+    data_pat_y = data_pat[target[0]]
     data_pat_X = data_pat[continuous+categoricals]
     data_pat_X = pd.get_dummies(data=data_pat_X, columns=categoricals)
     

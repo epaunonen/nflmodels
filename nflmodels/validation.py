@@ -4,9 +4,12 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_style('whitegrid')
 
-from sklearn.metrics import RocCurveDisplay
+from sklearn.metrics import RocCurveDisplay, ConfusionMatrixDisplay, classification_report, cohen_kappa_score
 
 def valplot_fieldgoal(X_val : pd.DataFrame, y_val : pd.DataFrame, y_pred, y_pred_proba):
+    '''
+    Plot validation performance figures from FieldGoalModel predictions.
+    '''
     fig, ax = plt.subplots(1, 3, figsize=(21,6))
 
     # 1. ROC curve
@@ -41,8 +44,25 @@ def valplot_fieldgoal(X_val : pd.DataFrame, y_val : pd.DataFrame, y_pred, y_pred
     plt.tight_layout()
     plt.show()
 
-def valplot_nextplay(X_val : pd.DataFrame, y_val : pd.DataFrame, y_pred, y_pred_proba):
-    return
+
+def valplot_nextplay(X_val : pd.DataFrame, y_val : pd.DataFrame, y_pred, y_pred_proba, labels=None):
+    '''
+    Plot validation performance figures from NextPlayModel predictions.
+    '''
+    fig, ax = plt.subplots(figsize=(6,6))
+
+    ConfusionMatrixDisplay.from_predictions(y_val, y_pred, ax=ax, cmap='Blues', display_labels = labels)
+
+    ax.grid(False)
+    plt.show()
+
+    # print prediction metrics
+    print(classification_report(y_val, y_pred))
+    print('Cohen kappa score: {:.3f}'.format(cohen_kappa_score(y_val, y_pred)))
+
 
 def valplot_ep(X_val : pd.DataFrame, y_val : pd.DataFrame, y_pred, y_pred_proba):
+    '''
+    Plot validation performance figures from EPModel predictions.
+    '''
     return
