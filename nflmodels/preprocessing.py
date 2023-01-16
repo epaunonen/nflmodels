@@ -218,7 +218,7 @@ def preprocess_ep(data : pd.DataFrame, seasons = [], verbose : bool = True):
     if verbose: print('Preprocessing {} rows...'.format(len(data)))
     
     query_string = ''
-    target = ['next_points']
+    target = ['next_score']
     continuous = ['yardline_100', 'ydstogo', 'goal_to_go', 'half_seconds_remaining', 'game_seconds_remaining']
     categoricals = ['qtr', 'down', 'posteam_type', 'posteam_timeouts_remaining', 'defteam_timeouts_remaining']
     
@@ -346,18 +346,26 @@ def preprocess_ep(data : pd.DataFrame, seasons = [], verbose : bool = True):
     
     if verbose: print(f'Final dataset size is {len(data)} rows')
     
-    # ========================= Feature selection and engineering =========================
-    # TODO: implement
-    
     # ========================= Separate field goal and extra (& 2) point attempts =========================
     
     #data_fg = data.query()
     # should cover all possible extra-point-related plays
-    #data_pat = data.query('(extra_point_attempt == 1 or two_point_attempt == 1) or (next_score == "pat" or next_score == "2pat" or next_score == "opp_patreturn")')
+    data_pat = data.query('(extra_point_attempt == 1 or two_point_attempt == 1) or (next_score == "pat" or next_score == "2pat" or next_score == "opp_patreturn")')
     
     # remove fg and pat rows from main set
     #data_normal = pd.concat([data, data_fg]).drop_duplicates(keep=False)
     #data_normal = pd.concat([data_normal, data_pat]).drop_duplicates(keep=False)
+    data_normal = pd.concat([data, data_pat]).drop_duplicates(keep=False)
+    
+    # ========================= Feature selection and engineering =========================
+    
+    data_normal_y = data_normal[target]
+    data_normal_X = data_normal[continuous+categoricals]
+    data_normal_X = pd.get_dummies(data=data_normal_X, columns=categoricals)
+    
+    data_pat_y = data_pat[target]
+    data_pat_X = data_pat[continuous+categoricals]
+    data_pat_X = pd.get_dummies(data=data_pat_X, columns=categoricals)
     
     #return data_normal, data_fg, data_pat
-    return data
+    return data_normal_X, data_normal_y, data_pat_X, data_pat_y
