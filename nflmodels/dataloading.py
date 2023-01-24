@@ -13,7 +13,7 @@ PRESET_COLS = ['play_id', 'game_id', 'home_team', 'away_team', 'posteam', 'poste
     'complete_pass', 'penalty_team', 'penalty_yards', 'season', 'drive_ended_with_score', 'away_score', 'home_score', 'game_stadium', 'roof', 
     'surface', 'weather', 'wind', 'temp', 'kicker_player_name']
 
-def load_data_postgresql(seasons : list = [], min_season : int = None, max_season : int = None, column_preset : bool = True, verbose=True, *args):
+def load_data_postgresql(seasons : list = [], min_season : int = None, max_season : int = None, column_preset : bool = True, cols : list = [], verbose=True):
      
     '''
     Loads nflverse pbp data from a PostgreSQL server. 
@@ -44,8 +44,8 @@ def load_data_postgresql(seasons : list = [], min_season : int = None, max_seaso
     if column_preset:
         columns = PRESET_COLS
     
-    for a in args:
-        columns.append(a)
+    for c in cols:
+        columns.append(c)
     
     column_string = ', '.join(columns)
     
