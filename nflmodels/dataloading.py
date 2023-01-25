@@ -2,18 +2,37 @@ import os
 import pg8000 as pg
 import pandas as pd
 
-PRESET_COLS = ['play_id', 'game_id', 'home_team', 'away_team', 'posteam', 'posteam_type', 'defteam', 'yardline_100',
-    'quarter_seconds_remaining', 'half_seconds_remaining', 'game_seconds_remaining', 'quarter_end', 'drive', 'sp', 'qtr', 'game_half',
-    'down', 'goal_to_go', 'yrdln', 'ydstogo', 'ydsnet', 'play_type', 'yards_gained', 'shotgun', 'no_huddle', 'qb_dropback', 'qb_kneel',
-    'qb_spike', 'qb_scramble', 'pass_length', 'pass_location', 'air_yards', 'yards_after_catch', 'run_location', 'run_gap', 'field_goal_result',
-    'kick_distance', 'extra_point_result', 'two_point_conv_result', 'posteam_timeouts_remaining', 'defteam_timeouts_remaining', 'timeout', 
-    'timeout_team', 'td_team', 'posteam_score', 'defteam_score', 'score_differential', 'posteam_score_post', 'defteam_score_post', 
-    'score_differential_post', 'ep', 'epa', 'wp', 'def_wp', 'home_wp', 'away_wp', 'wpa', 'penalty', 'safety', 'interception', 'touchdown', 'pass_touchdown',
-    'rush_touchdown', 'return_touchdown', 'extra_point_attempt', 'two_point_attempt', 'field_goal_attempt', 'kickoff_attempt', 'punt_attempt', 
-    'complete_pass', 'penalty_team', 'penalty_yards', 'season', 'drive_ended_with_score', 'away_score', 'home_score', 'game_stadium', 'roof', 
-    'surface', 'weather', 'wind', 'temp', 'kicker_player_name']
+PRESET_COLS = [
+    'play_id', 'game_id', 
+    'home_team', 'away_team', 
+    'posteam', 'posteam_type', 'defteam', 
+    'yardline_100',
+    'quarter_seconds_remaining', 'half_seconds_remaining', 'game_seconds_remaining', 
+    'quarter_end', 
+    'drive', 'sp', 
+    'qtr', 'game_half',
+    'down', 'goal_to_go', 'yrdln', 'ydstogo', 
+    'ydsnet', 'play_type', 'yards_gained', 
+    'shotgun', 'no_huddle', 
+    'qb_dropback', 'qb_kneel', 'qb_spike', 'qb_scramble', 
+    'pass_length', 'pass_location', 'air_yards', 'yards_after_catch', 
+    'run_location', 'run_gap', 
+    'field_goal_result', 'kick_distance', 
+    'extra_point_result', 'two_point_conv_result', 
+    'posteam_timeouts_remaining', 'defteam_timeouts_remaining', 
+    'timeout', 'timeout_team', 
+    'td_team', 'posteam_score', 'defteam_score', 'score_differential', 
+    'posteam_score_post', 'defteam_score_post', 'score_differential_post', 
+    'ep', 'epa', 'wp', 'def_wp', 'home_wp', 'away_wp', 'wpa', 
+    'penalty', 'safety', 'interception', 
+    'touchdown', 'pass_touchdown', 'rush_touchdown', 'return_touchdown', 
+    'extra_point_attempt', 'two_point_attempt', 'field_goal_attempt', 'kickoff_attempt', 'punt_attempt', 
+    'complete_pass', 
+    'penalty_team', 'penalty_yards', 
+    'season', 'drive_ended_with_score', 'away_score', 'home_score', 
+    'game_stadium', 'roof', 'surface', 'weather', 'wind', 'temp', 'kicker_player_name']
 
-def load_data_postgresql(seasons : list = [], min_season : int = None, max_season : int = None, column_preset : bool = True, cols : list = [], verbose=True):
+def load_data_postgresql(seasons : list = [], min_season : int = None, max_season : int = None, column_preset : bool = True, cols : list = [], verbose=True, from_env = False, credentials = {}):
      
     '''
     Loads nflverse pbp data from a PostgreSQL server. 
@@ -30,13 +49,21 @@ def load_data_postgresql(seasons : list = [], min_season : int = None, max_seaso
         Returns:
         df (DataFrame): Loaded data
     '''
-     
-    USER = os.getenv('USER')
-    PASSWORD = os.getenv('PASSWORD')
-    HOST = os.getenv('HOST')
-    PORT = os.getenv('PORT')
-    DBNAME = os.getenv('DBNAME')
-    TABLENAME = os.getenv('TABLENAME')
+    
+    if from_env:
+        USER = os.getenv('USER')
+        PASSWORD = os.getenv('PASSWORD')
+        HOST = os.getenv('HOST')
+        PORT = os.getenv('PORT')
+        DBNAME = os.getenv('DBNAME')
+        TABLENAME = os.getenv('TABLENAME')
+    else:
+        USER = credentials['user']
+        PASSWORD = credentials['password']
+        HOST = credentials['host']
+        PORT = credentials['port']
+        DBNAME = credentials['dbname']
+        TABLENAME = credentials['tablename']
     
     columns = []
     conditions = []
