@@ -32,7 +32,7 @@ PRESET_COLS = [
     'season', 'drive_ended_with_score', 'away_score', 'home_score', 
     'game_stadium', 'roof', 'surface', 'weather', 'wind', 'temp', 'kicker_player_name']
 
-def load_data_postgresql(seasons : list = [], min_season : int = None, max_season : int = None, column_preset : bool = True, cols : list = [], verbose=True, from_env = False, credentials = {}):
+def load_data_postgresql(seasons : list = [], min_season : int = None, max_season : int = None, column_preset : bool = True, cols : list = [], verbose=True, credentials = {}):
      
     '''
     Loads nflverse pbp data from a PostgreSQL server. 
@@ -50,20 +50,12 @@ def load_data_postgresql(seasons : list = [], min_season : int = None, max_seaso
         df (DataFrame): Loaded data
     '''
     
-    if from_env:
-        USER = os.getenv('USER')
-        PASSWORD = os.getenv('PASSWORD')
-        HOST = os.getenv('HOST')
-        PORT = os.getenv('PORT')
-        DBNAME = os.getenv('DBNAME')
-        TABLENAME = os.getenv('TABLENAME')
-    else:
-        USER = credentials['user']
-        PASSWORD = credentials['password']
-        HOST = credentials['host']
-        PORT = credentials['port']
-        DBNAME = credentials['dbname']
-        TABLENAME = credentials['tablename']
+    USER = credentials['user']
+    PASSWORD = credentials['password']
+    HOST = credentials['host']
+    PORT = credentials['port']
+    DBNAME = credentials['dbname']
+    TABLENAME = credentials['tablename']
     
     columns = []
     conditions = []
