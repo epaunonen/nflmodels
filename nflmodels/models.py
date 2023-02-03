@@ -9,15 +9,22 @@ class NFLModel():
     def __init__(self):
         self.classifier = None
     
+    def clf(self):
+        '''Alias for getting the classifier'''
+        return self.classifier
+    
     def fit(self, X_train : pd.DataFrame, y_train : pd.DataFrame):
+        '''Fit model to data, wrapper around the underlying fit function (equivalent to calling model.classifier.fit(x, y))'''
         self.classifier.fit(X_train, y_train)
         
     def validate(self, X_val : pd.DataFrame, y_val : pd.DataFrame):
+        '''Predict on supplied validation set and return predictions, don't call directly'''
         y_pred = self.classifier.predict(X_val)
         y_pred_proba = self.classifier.predict_proba(X_val)
         return y_pred, y_pred_proba
         
     def fit_validate(self, X_train : pd.DataFrame, y_train : pd.DataFrame, X_val : pd.DataFrame, y_val : pd.DataFrame):
+        '''Shorthand for fit().validate()'''
         self.fit(X_train, y_train)
         self.validate(X_val, y_val)
         
@@ -28,6 +35,8 @@ class NextPlayModel(NFLModel):
         self.classifier = xgb.XGBClassifier(n_jobs=-1, n_estimators=100, learning_rate=0.1, eval_metric='mlogloss', min_child_weight=2)
         
     def validate(self, X_val: pd.DataFrame, y_val: pd.DataFrame):
+        '''Predict on validation set and print validation metrics'''
+        
         y_pred, y_pred_proba = super().validate(X_val, y_val)
         
         print('On validation set')
@@ -47,6 +56,7 @@ class FieldGoalModel(NFLModel):
         self.classifier = LogisticRegression(max_iter=1000)
         
     def validate(self, X_val: pd.DataFrame, y_val: pd.DataFrame):
+        '''Predict on validation set and print validation metrics'''
         y_pred, y_pred_proba = super().validate(X_val, y_val)
         
         print('On validation set')
@@ -63,6 +73,7 @@ class EPModel(NFLModel):
         self.classifier = LogisticRegression(max_iter=10000, n_jobs=-1)
         
     def validate(self, X_val: pd.DataFrame, y_val: pd.DataFrame):
+        '''Predict on validation set and print validation metrics'''
         y_pred, y_pred_proba = super().validate(X_val, y_val)
         
         print('On validation set')
